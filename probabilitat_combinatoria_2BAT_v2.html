@@ -1,0 +1,1245 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Probabilitat i Combinatòria · 2n BAT</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Source+Sans+3:wght@300;400;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)']],
+      displayMath: [['\\[', '\\]']],
+      tags: 'none'
+    },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre'] },
+    svg: { fontCache: 'global' }
+  };
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async></script>
+
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #181c27;
+    --surface2: #1e2436;
+    --border: #2a3050;
+    --accent1: #f5a623;
+    --accent2: #4ecdc4;
+    --accent3: #ff6b9d;
+    --accent4: #a78bfa;
+    --text: #e8eaf0;
+    --text-muted: #8892b0;
+    --green: #64ffda;
+    --red: #ff6b6b;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 17px;
+    line-height: 1.75;
+    overflow-x: hidden;
+  }
+
+  mjx-container { color: var(--accent1) !important; }
+  mjx-container[display="true"] { margin: 0 !important; color: var(--accent1) !important; }
+
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    background: radial-gradient(ellipse at 30% 50%, #1a1f3a 0%, #0f1117 60%),
+                radial-gradient(ellipse at 80% 20%, #1f1a30 0%, transparent 50%);
+    padding: 60px 20px;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      radial-gradient(circle at 20% 80%, rgba(245,166,35,0.08) 0%, transparent 40%),
+      radial-gradient(circle at 80% 20%, rgba(78,205,196,0.08) 0%, transparent 40%);
+  }
+  .hero-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+  .hero h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 900;
+    line-height: 1.05;
+    background: linear-gradient(135deg, var(--accent1) 0%, var(--accent2) 50%, var(--accent4) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.4s forwards;
+  }
+  .hero-sub {
+    font-size: 20px;
+    color: var(--text-muted);
+    margin-top: 16px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.6s forwards;
+  }
+  .hero-pills {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 40px;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.8s forwards;
+  }
+  .pill {
+    padding: 8px 20px;
+    border-radius: 100px;
+    border: 1px solid var(--border);
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    color: var(--text-muted);
+    background: var(--surface);
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+  }
+  .pill:hover { border-color: var(--accent2); color: var(--accent2); transform: translateY(-2px); }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(15,17,23,0.9);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 40px;
+    display: flex;
+    gap: 0;
+    overflow-x: auto;
+  }
+  nav a {
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.5px;
+    padding: 16px 20px;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+  nav a:hover { color: var(--accent1); border-bottom-color: var(--accent1); }
+
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+
+  .section { padding: 80px 0; border-bottom: 1px solid var(--border); }
+  .section-header { display: flex; align-items: center; gap: 16px; margin-bottom: 48px; }
+  .section-num { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--accent2); letter-spacing: 2px; opacity: 0.7; }
+  .section h2 { font-family: 'Playfair Display', serif; font-size: clamp(28px, 4vw, 42px); font-weight: 700; color: var(--text); }
+  .section h2 span { color: var(--accent1); }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin-bottom: 24px;
+    transition: border-color 0.3s;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .card.gold::before { background: linear-gradient(90deg, var(--accent1), transparent); }
+  .card.teal::before { background: linear-gradient(90deg, var(--accent2), transparent); }
+  .card.pink::before { background: linear-gradient(90deg, var(--accent3), transparent); }
+  .card.purple::before { background: linear-gradient(90deg, var(--accent4), transparent); }
+  .card.green::before { background: linear-gradient(90deg, var(--green), transparent); }
+  .card:hover { border-color: #3a4060; }
+  .card h3 { font-family: 'Playfair Display', serif; font-size: 22px; margin-bottom: 16px; color: var(--text); }
+  .card h4 { font-size: 14px; font-family: 'JetBrains Mono', monospace; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; color: var(--accent2); }
+
+  .formula-box {
+    background: #0a0d14;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin: 20px 0;
+    text-align: center;
+    position: relative;
+    font-size: 18px;
+  }
+  .formula-box mjx-container { font-size: 1.4em !important; }
+  .formula-label {
+    position: absolute;
+    top: -10px; left: 20px;
+    background: var(--accent1);
+    color: #000;
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 2px 10px;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  .example-box {
+    background: rgba(78,205,196,0.05);
+    border: 1px solid rgba(78,205,196,0.2);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+  }
+  .example-box .ex-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    margin-bottom: 12px;
+    display: block;
+  }
+  .example-box p { color: var(--text); margin-bottom: 8px; }
+
+  .step { display: flex; gap: 16px; align-items: flex-start; margin: 10px 0; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .step:last-child { border-bottom: none; }
+  .step-num {
+    width: 28px; height: 28px; min-width: 28px;
+    background: var(--accent1); color: #000;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    margin-top: 3px;
+  }
+
+  .solved { background: var(--surface2); border: 1px solid var(--border); border-radius: 16px; margin: 24px 0; overflow: hidden; }
+  .solved-header {
+    background: linear-gradient(135deg, #1e2840, #1a2035);
+    padding: 20px 28px;
+    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  }
+  .solved-badge {
+    background: var(--accent1); color: #000;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 4px; white-space: nowrap;
+  }
+  .solved-header p { font-size: 15px; color: var(--text); font-weight: 600; }
+  .solved-body { padding: 24px 28px; }
+  .math-step {
+    display: block;
+    margin: 12px 0;
+    padding: 16px 20px;
+    background: #0a0d14;
+    border-radius: 8px;
+    border-left: 3px solid var(--accent1);
+    text-align: center;
+  }
+
+  .result {
+    display: inline-block;
+    background: rgba(100,255,218,0.1);
+    border: 1px solid var(--green);
+    color: var(--green);
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 17px; font-weight: 600;
+    margin-top: 12px;
+  }
+
+  .practice-grid { display: grid; gap: 16px; margin-top: 24px; }
+  .practice-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    display: flex; gap: 16px; align-items: flex-start;
+    transition: all 0.3s;
+  }
+  .practice-item:hover { border-color: var(--accent4); transform: translateX(4px); }
+  .practice-num {
+    width: 32px; height: 32px; min-width: 32px;
+    border: 2px solid var(--accent4); color: var(--accent4);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px; font-weight: 600; margin-top: 2px;
+  }
+  .practice-item p { color: var(--text); }
+  .hint-btn {
+    margin-top: 10px;
+    background: none; border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 12px; font-family: 'JetBrains Mono', monospace;
+    padding: 4px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s;
+  }
+  .hint-btn:hover { border-color: var(--accent4); color: var(--accent4); }
+  .hint-text {
+    display: none; margin-top: 8px; font-size: 14px;
+    color: var(--accent4); font-style: italic;
+    padding: 8px 12px;
+    background: rgba(167,139,250,0.08); border-radius: 6px;
+  }
+
+  .def-box { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 24px 0; }
+  .def-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+  .def-item .def-title { font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--accent3); margin-bottom: 8px; }
+  .def-item p { font-size: 15px; color: var(--text-muted); }
+
+  .compare-table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 15px; }
+  .compare-table th { background: var(--surface2); color: var(--accent2); font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; padding: 14px 20px; text-align: left; border-bottom: 2px solid var(--border); }
+  .compare-table td { padding: 14px 20px; border-bottom: 1px solid var(--border); color: var(--text); }
+  .compare-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .compare-table .formula-cell { color: var(--accent1); }
+
+  .laws-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 24px 0; }
+  .law-card { background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; padding: 24px; text-align: center; }
+  .law-card .law-name { font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 3px; color: var(--accent4); text-transform: uppercase; margin-bottom: 16px; }
+  .law-card .law-formula { background: #0a0d14; padding: 16px; border-radius: 8px; }
+
+  .props-list { counter-reset: prop; list-style: none; margin: 20px 0; }
+  .props-list li {
+    counter-increment: prop;
+    display: flex; gap: 16px; align-items: flex-start;
+    padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+  }
+  .props-list li::before {
+    content: counter(prop);
+    width: 26px; height: 26px; min-width: 26px;
+    background: var(--accent2); color: #000;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: 6px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px; font-weight: 700; margin-top: 2px;
+  }
+  .prop-formula-box { background: #0a0d14; border-radius: 8px; padding: 10px 16px; margin-top: 8px; display: inline-block; }
+
+  .trick-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px; }
+  .trick-item { background: #0a0d14; padding: 20px; border-radius: 10px; text-align: center; }
+  .trick-item p.label { color: var(--text-muted); font-size: 13px; margin-bottom: 10px; }
+
+  .exam-section {
+    background: linear-gradient(135deg, #12162a 0%, #0f1117 100%);
+    border: 2px solid var(--accent3);
+    border-radius: 20px;
+    padding: 48px; margin: 40px 0;
+    position: relative; overflow: hidden;
+  }
+  .exam-section::before {
+    content: 'EXAMEN';
+    position: absolute; top: -20px; right: 40px;
+    font-family: 'Playfair Display', serif;
+    font-size: 120px; font-weight: 900;
+    color: rgba(255,107,157,0.04); letter-spacing: -4px; pointer-events: none;
+  }
+  .exam-header { text-align: center; margin-bottom: 48px; }
+  .exam-header .exam-tag {
+    display: inline-block; background: var(--accent3); color: #000;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+    padding: 6px 16px; border-radius: 4px; margin-bottom: 16px;
+  }
+  .exam-header h2 { font-family: 'Playfair Display', serif; font-size: 36px; color: var(--text); margin-bottom: 8px; }
+  .exam-header p { color: var(--text-muted); font-size: 15px; }
+  .exam-question {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,107,157,0.2);
+    border-radius: 12px; padding: 24px 28px; margin: 16px 0;
+    display: flex; gap: 20px; align-items: flex-start;
+  }
+  .q-num {
+    width: 40px; height: 40px; min-width: 40px;
+    background: linear-gradient(135deg, var(--accent3), #c84b8a); color: #fff;
+    border-radius: 10px; display: flex; align-items: center; justify-content: center;
+    font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; margin-top: 2px;
+  }
+  .q-content p { color: var(--text); line-height: 1.7; }
+  .q-content .q-parts { margin-top: 12px; }
+  .q-content .q-parts p { color: var(--text-muted); font-size: 15px; padding-left: 16px; border-left: 2px solid var(--border); margin: 6px 0; }
+  .exam-info { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; margin-top: 32px; padding-top: 32px; border-top: 1px solid var(--border); }
+  .exam-info-item { display: flex; align-items: center; gap: 8px; font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-muted); }
+  .exam-info-item .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent3); }
+
+  .fade-in { opacity: 0; transform: translateY(30px); transition: opacity 0.6s, transform 0.6s; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  footer { text-align: center; padding: 60px 20px; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; font-size: 12px; letter-spacing: 2px; border-top: 1px solid var(--border); }
+
+  @media (max-width: 600px) {
+    nav { padding: 0 16px; }
+    .exam-section { padding: 28px 20px; }
+    .trick-grid { grid-template-columns: 1fr; }
+    .compare-table { font-size: 13px; }
+    .compare-table th, .compare-table td { padding: 10px 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <p class="hero-tag">2n Batxillerat · Matemàtiques</p>
+  <h1>Probabilitat<br>i Combinatòria</h1>
+  <p class="hero-sub">Teoria completa · Exercicis resolts · Examen de pràctica</p>
+  <div class="hero-pills">
+    <a class="pill" href="#espai">Espai Mostral</a>
+    <a class="pill" href="#var-sr">Variacions s/r</a>
+    <a class="pill" href="#var-cr">Variacions c/r</a>
+    <a class="pill" href="#perm">Permutacions</a>
+    <a class="pill" href="#comb">Combinacions</a>
+    <a class="pill" href="#esdev">Esdeveniments</a>
+    <a class="pill" href="#prob">Probabilitat</a>
+    <a class="pill" href="#examen">Examen</a>
+  </div>
+</div>
+
+<nav>
+  <a href="#espai">Espai mostral</a>
+  <a href="#var-sr">Var. s/r</a>
+  <a href="#var-cr">Var. c/r</a>
+  <a href="#perm">Permutacions</a>
+  <a href="#comb">Combinacions</a>
+  <a href="#esdev">Esdeveniments</a>
+  <a href="#prob">Probabilitat</a>
+  <a href="#morgan">De Morgan</a>
+  <a href="#examen">Examen</a>
+</nav>
+
+<!-- SECCIÓ 0: ESPAI MOSTRAL -->
+<section class="section" id="espai">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-num">00</span>
+      <h2>Espai <span>Mostral</span></h2>
+    </div>
+    <div class="card gold fade-in">
+      <h4>Definicions bàsiques</h4>
+      <div class="def-box">
+        <div class="def-item">
+          <p class="def-title">Experiment aleatori</p>
+          <p>Experiment del qual <strong>no podem predir el resultat</strong> perquè depèn de l'atzar. Pot repetir-se en les mateixes condicions.</p>
+        </div>
+        <div class="def-item">
+          <p class="def-title">Espai mostral (E)</p>
+          <p>Conjunt de <strong>tots els possibles resultats</strong> d'un experiment aleatori. Es denota amb la lletra <strong>E</strong>.</p>
+        </div>
+        <div class="def-item">
+          <p class="def-title">Diagrama d'arbre</p>
+          <p>Mètode visual per comptar possibilitats. L'espai mostral s'obté a les <strong>branques finals</strong> del diagrama.</p>
+        </div>
+        <div class="def-item">
+          <p class="def-title">Regla del producte</p>
+          <p>Si una acció té <em>a</em> opcions i una altra té <em>b</em> opcions, hi ha <strong>a × b</strong> combinacions totals.</p>
+        </div>
+      </div>
+      <div class="example-box">
+        <span class="ex-label">Exemples d'espai mostral</span>
+        <p>🎲 Llençar un dau → <strong style="color:var(--accent1); font-family:monospace;">E = {1, 2, 3, 4, 5, 6}</strong></p>
+        <p>🃏 Color d'una carta → <strong style="color:var(--accent1); font-family:monospace;">E = {vermell, negre}</strong></p>
+        <p>🌦️ Temps demà → <strong style="color:var(--accent1); font-family:monospace;">E = {sol, núvols, pluja, neu}</strong></p>
+      </div>
+    </div>
+    <div class="solved fade-in">
+      <div class="solved-header">
+        <span class="solved-badge">Exercici resolt</span>
+        <p>Una botiga de roba ofereix samarretes en 3 talles (S, M, L) i 4 colors (blanc, negre, blau, verd). Quantes opcions de samarreta hi ha?</p>
+      </div>
+      <div class="solved-body">
+        <div class="step"><div class="step-num">1</div><div><p>Identifiquem les opcions de cada pas: 3 talles i 4 colors.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div><p>Apliquem la <strong>regla del producte</strong>: multipliquem les opcions de cada etapa.</p></div></div>
+        <div class="step"><div class="step-num">3</div><div><div class="math-step">\( 3 \times 4 = 12 \text{ opcions} \)</div></div></div>
+        <p style="color:var(--text-muted); margin-top:8px;">Opcions: S·blanc, S·negre, S·blau, S·verd, M·blanc... (12 en total)</p>
+        <div class="result">Resposta: 12 samarretes diferents</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓ 1: VARIACIONS SENSE REPETICIÓ -->
+<section class="section" id="var-sr">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-num">01</span>
+      <h2>Variacions <span>Sense Repetició</span></h2>
+    </div>
+    <div class="card teal fade-in">
+      <h3>Quan s'aplica?</h3>
+      <p>Quan escollim <strong>m elements de n</strong>, l'<strong>ordre importa</strong> i <strong>no es pot repetir</strong> cap element.</p>
+      <p style="margin-top:10px; color:var(--text-muted);">Paraula clau: <em>"assignar rols distints"</em>, <em>"ordenar en posicions"</em>, <em>"seleccionar amb càrrec específic"</em>.</p>
+      <div class="formula-box">
+        <span class="formula-label">Fórmula</span>
+        \[ V(n,m) = \frac{n!}{(n-m)!} \]
+      </div>
+      <p style="color:var(--text-muted); font-size:14px; text-align:center;">on \(n\) = total d'elements disponibles · \(m\) = quants en triem</p>
+    </div>
+
+    <div class="solved fade-in">
+      <div class="solved-header">
+        <span class="solved-badge">Exercici resolt 1</span>
+        <p>En un festival de música, 7 grups volen tocar en els 3 horaris estel·lars (20h, 22h i 24h). De quantes formes es pot fer el cartell?</p>
+      </div>
+      <div class="solved-body">
+        <div class="step"><div class="step-num">1</div><div><p>n = 7 grups, m = 3 horaris. L'ordre importa (tocar a les 20h ≠ tocar a les 22h) i sense repetició.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div><p>Apliquem <strong>variació sense repetició</strong>.</p></div></div>
+        <div class="step"><div class="step-num">3</div><div>
+          <div class="math-step">\[ V(7,3) = \frac{7!}{(7-3)!} = \frac{7!}{4!} = 7 \times 6 \times 5 = 210 \]</div>
+        </div></div>
+        <div class="result">Resposta: 210 cartells possibles</div>
+      </div>
+    </div>
+
+    <div class="solved fade-in">
+      <div class="solved-header">
+        <span class="solved-badge">Exercici resolt 2</span>
+        <p>En un torneig d'escacs amb 9 jugadors, s'han d'atorgar trofeus de 1r, 2n i 3r classificat. De quantes formes es pot repartir el podi?</p>
+      </div>
+      <div class="solved-body">
+        <div class="step"><div class="step-num">1</div><div><p>n = 9, m = 3 posicions diferenciades. L'ordre importa (1r ≠ 2n), sense repetició.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div>
+          <div class="math-step">\[ V(9,3) = \frac{9!}{(9-3)!} = \frac{9!}{6!} = 9 \times 8 \times 7 = 504 \]</div>
+        </div></div>
+        <div class="result">Resposta: 504 podis possibles</div>
+      </div>
+    </div>
+
+    <div class="fade-in">
+      <h4 style="font-family:'Playfair Display',serif; font-size:22px; margin-bottom:16px; margin-top:32px;">Exercicis de <span style="color:var(--accent4);">pràctica</span></h4>
+      <div class="practice-grid">
+        <div class="practice-item"><div class="practice-num">1</div><div>
+          <p>Un restaurant vol posar 4 plats del dia en un tauler amb 4 franges horàries distintes, escollint de la seva carta de 10 plats. De quantes formes pot omplir el tauler?</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">\(V(10,4) = \frac{10!}{6!} = 5.040\)</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">2</div><div>
+          <p>En un concurs de ball hi ha 12 parelles finalistes. De quantes maneres es pot assignar el 1r, 2n i 3r premi?</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">\(V(12,3) = 12 \times 11 \times 10 = 1.320\)</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">3</div><div>
+          <p>Vols crear una contrasenya de 5 lletres distintes usant únicament les lletres de la paraula PLANETA (7 lletres totes distintes). De quantes formes es pot fer?</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">\(V(7,5) = \frac{7!}{2!} = 2.520\)</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">4</div><div>
+          <p>Una empresa té 8 candidats per als llocs de director general, director comercial i cap de RRHH. Quantes formes de selecció hi ha?</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">\(V(8,3) = 8 \times 7 \times 6 = 336\)</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">5</div><div>
+          <p>Un museu vol disposar 4 escultures (de les 11 que té) en una galeria lineal on la posició de cada peça importa. De quantes maneres ho pot fer?</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">\(V(11,4) = \frac{11!}{7!} = 7.920\)</p>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓ 2: VARIACIONS AMB REPETICIÓ -->
+<section class="section" id="var-cr">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-num">02</span>
+      <h2>Variacions <span>Amb Repetició</span></h2>
+    </div>
+    <div class="card pink fade-in">
+      <h3>Quan s'aplica?</h3>
+      <p>Quan escollim <strong>m elements de n</strong>, l'<strong>ordre importa</strong> i els elements <strong>es poden repetir</strong>.</p>
+      <p style="margin-top:10px; color:var(--text-muted);">Paraula clau: <em>"es poden repetir"</em>, <em>"codis"</em>, <em>"contrasenyes"</em>, <em>"matrícules"</em>.</p>
+      <div class="formula-box">
+        <span class="formula-label">Fórmula</span>
+        \[ VR(n,m) = n^m \]
+      </div>
+    </div>
+
+    <div class="solved fade-in">
+      <div class="solved-header">
+        <span class="solved-badge">Exercici resolt 1</span>
+        <p>Una empresa crea identificadors de 3 lletres majúscules (A-Z) per als seus productes. Les lletres es poden repetir. Quants identificadors pot crear?</p>
+      </div>
+      <div class="solved-body">
+        <div class="step"><div class="step-num">1</div><div><p>n = 26 lletres, m = 3 posicions. L'ordre importa (ABC ≠ BAC), amb repetició.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div>
+          <div class="math-step">\[ VR(26,3) = 26^3 = 17.576 \]</div>
+        </div></div>
+        <div class="result">Resposta: 17.576 identificadors possibles</div>
+      </div>
+    </div>
+
+    <div class="solved fade-in">
+      <div class="solved-header">
+        <span class="solved-badge">Exercici resolt 2</span>
+        <p>Un semàfor de 4 llums (cada una pot ser vermell, groc o verd) emet senyals seqüencials. Quants senyals distints pot emetre?</p>
+      </div>
+      <div class="solved-body">
+        <div class="step"><div class="step-num">1</div><div><p>n = 3 colors, m = 4 posicions. L'ordre importa, amb repetició del color.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div>
+          <div class="math-step">\[ VR(3,4) = 3^4 = 81 \]</div>
+        </div></div>
+        <div class="result">Resposta: 81 senyals distints</div>
+      </div>
+    </div>
+
+    <div class="fade-in">
+      <h4 style="font-family:'Playfair Display',serif; font-size:22px; margin-bottom:16px; margin-top:32px;">Exercicis de <span style="color:var(--accent4);">pràctica</span></h4>
+      <div class="practice-grid">
+        <div class="practice-item"><div class="practice-num">1</div><div>
+          <p>Un codi PIN bancari té 4 xifres (del 0 al 9) que es poden repetir. Quants codis PIN possibles hi ha?</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">\(10^4 = 10.000\)</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">2</div><div>
+          <p>Un formulari web requereix un nom d'usuari de 5 caràcters (lletres minúscules a-z, amb repetició permesa). Quants noms d'usuari possibles hi ha?</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">\(26^5 = 11.881.376\)</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">3</div><div>
+          <p>Un menú de degustació permet triar 3 plats d'una llista de 8 especialitats, podent repetir plats. Si l'ordre de servei importa, quantes combinacions hi ha?</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">\(8^3 = 512\)</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">4</div><div>
+          <p>Llencem 2 daus de 6 cares i anotem el resultat de cada dau per ordre (primer dau, segon dau). Quants resultats distints hi ha?</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">\(6^2 = 36\)</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">5</div><div>
+          <p>Una alarma de seguretat té un codi de 6 xifres binàries (0 o 1). Quants codis distints pot tenir?</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">\(2^6 = 64\)</p>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓ 3: PERMUTACIONS -->
+<section class="section" id="perm">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-num">03</span>
+      <h2><span>Permutacions</span></h2>
+    </div>
+    <div class="card purple fade-in">
+      <h3>Quan s'aplica?</h3>
+      <p>Quan agafem <strong>tots els elements</strong> (m = n), l'<strong>ordre importa</strong> i <strong>no es repeteix</strong> cap. És el cas especial de la variació sense repetició on s'usen tots els elements.</p>
+      <div class="formula-box">
+        <span class="formula-label">Fórmula</span>
+        \[ P(n) = n! \]
+      </div>
+      <div class="example-box">
+        <span class="ex-label">Recordatori del factorial</span>
+        <p style="text-align:center;">\( n! = n \times (n-1) \times (n-2) \times \cdots \times 2 \times 1 \)</p>
+        <p style="text-align:center; margin-top:8px;">\( 6! = 6 \times 5 \times 4 \times 3 \times 2 \times 1 = 720 \)</p>
+        <p style="text-align:center; margin-top:4px; color:var(--text-muted); font-size:14px;">Per convenció: \( 0! = 1 \)</p>
+      </div>
+    </div>
+
+    <div class="solved fade-in">
+      <div class="solved-header">
+        <span class="solved-badge">Exercici resolt 1</span>
+        <p>Una biblioteca vol ordenar 6 novel·les d'un mateix autor en una prestatgeria. De quantes formes es poden col·locar?</p>
+      </div>
+      <div class="solved-body">
+        <div class="step"><div class="step-num">1</div><div><p>Agafem tots els elements (n = m = 6), l'ordre importa, sense repetició. → <strong>Permutació</strong>.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div>
+          <div class="math-step">\[ P(6) = 6! = 6 \times 5 \times 4 \times 3 \times 2 \times 1 = 720 \]</div>
+        </div></div>
+        <div class="result">Resposta: 720 ordenacions possibles</div>
+      </div>
+    </div>
+
+    <div class="solved fade-in">
+      <div class="solved-header">
+        <span class="solved-badge">Exercici resolt 2</span>
+        <p>8 atletes participen en una cursa. Si tots acaben, de quantes formes es pot donar l'ordre d'arribada?</p>
+      </div>
+      <div class="solved-body">
+        <div class="step"><div class="step-num">1</div><div><p>Agafem tots els elements (n = m = 8). Cada resultat d'arribada és una ordenació diferent. → <strong>Permutació</strong>.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div>
+          <div class="math-step">\[ P(8) = 8! = 40.320 \]</div>
+        </div></div>
+        <div class="result">Resposta: 40.320 ordres d'arribada possibles</div>
+      </div>
+    </div>
+
+    <div class="fade-in">
+      <h4 style="font-family:'Playfair Display',serif; font-size:22px; margin-bottom:16px; margin-top:32px;">Exercicis de <span style="color:var(--accent4);">pràctica</span></h4>
+      <div class="practice-grid">
+        <div class="practice-item"><div class="practice-num">1</div><div>
+          <p>Un director de cinema ha de decidir l'ordre de projecció de 5 curtmetratges en un festival. De quantes maneres pot programar el vespre?</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">\(P(5) = 5! = 120\)</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">2</div><div>
+          <p>Quantes paraules (reals o no) es poden formar reordenant totes les lletres del mot RADIO (les 5 lletres son distintes)?</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">\(P(5) = 5! = 120\)</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">3</div><div>
+          <p>En un sopar de 7 persones, de quantes formes es poden asseure totes en una fila de cadires numerades (la posició importa)?</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">\(P(7) = 7! = 5.040\)</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">4</div><div>
+          <p>Un professor ha de corregir 9 treballs. Si cada dia n'agafa un diferent per corregir primer, de quantes maneres pot organitzar l'ordre de correcció?</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">\(P(9) = 9! = 362.880\)</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">5</div><div>
+          <p>Un disc de vinil té 4 cançons per cara. De quantes formes es pot decidir l'ordre de les cançons de la cara A?</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">\(P(4) = 4! = 24\)</p>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓ 4: COMBINACIONS -->
+<section class="section" id="comb">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-num">04</span>
+      <h2><span>Combinacions</span></h2>
+    </div>
+    <div class="card green fade-in">
+      <h3>Quan s'aplica?</h3>
+      <p>Quan escollim <strong>m elements de n</strong>, l'<strong>ordre NO importa</strong> i <strong>no es repeteixen</strong>.</p>
+      <p style="margin-top:10px; color:var(--text-muted);">Paraula clau: <em>"escollir un grup"</em>, <em>"seleccionar sense importar l'ordre"</em>, <em>"quins"</em> (no "en quin ordre").</p>
+      <div class="formula-box">
+        <span class="formula-label">Fórmula</span>
+        \[ C(n,m) = \binom{n}{m} = \frac{n!}{m! \cdot (n-m)!} \]
+      </div>
+    </div>
+
+    <div class="solved fade-in">
+      <div class="solved-header">
+        <span class="solved-badge">Exercici resolt 1</span>
+        <p>Un grup de 12 voluntaris ha de formar un equip de 4 persones per netejar el parc. L'ordre no importa. Quants equips es poden formar?</p>
+      </div>
+      <div class="solved-body">
+        <div class="step"><div class="step-num">1</div><div><p>n = 12, m = 4. L'ordre NO importa (el grup és el mateix sigui quin sigui l'ordre). → <strong>Combinació</strong>.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div>
+          <div class="math-step">\[ C(12,4) = \frac{12!}{4! \cdot 8!} = \frac{12 \times 11 \times 10 \times 9}{4 \times 3 \times 2 \times 1} = \frac{11.880}{24} = 495 \]</div>
+        </div></div>
+        <div class="result">Resposta: 495 equips possibles</div>
+      </div>
+    </div>
+
+    <div class="solved fade-in">
+      <div class="solved-header">
+        <span class="solved-badge">Exercici resolt 2</span>
+        <p>Una plataforma de streaming té 15 sèries. Un usuari en vol afegir 5 a la seva llista. Quantes llistes distintes pot crear si l'ordre no importa?</p>
+      </div>
+      <div class="solved-body">
+        <div class="step"><div class="step-num">1</div><div><p>n = 15, m = 5. L'ordre NO importa. → <strong>Combinació</strong>.</p></div></div>
+        <div class="step"><div class="step-num">2</div><div>
+          <div class="math-step">\[ C(15,5) = \frac{15!}{5! \cdot 10!} = \frac{15 \times 14 \times 13 \times 12 \times 11}{120} = \frac{360.360}{120} = 3.003 \]</div>
+        </div></div>
+        <div class="result">Resposta: 3.003 llistes possibles</div>
+      </div>
+    </div>
+
+    <!-- TAULA RESUM -->
+    <div class="fade-in" style="margin-top:40px;">
+      <h4 style="font-family:'Playfair Display',serif; font-size:22px; margin-bottom:16px;">Taula <span style="color:var(--accent1);">resum</span> — Quin tipus aplico?</h4>
+      <table class="compare-table">
+        <thead>
+          <tr><th>Tipus</th><th>Ordre?</th><th>Repetició?</th><th>Usa tots?</th><th>Fórmula</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Variació s/r</strong></td><td>✅ Sí</td><td>❌ No</td><td>❌ No</td><td class="formula-cell">\(\dfrac{n!}{(n-m)!}\)</td></tr>
+          <tr><td><strong>Variació c/r</strong></td><td>✅ Sí</td><td>✅ Sí</td><td>❌ No</td><td class="formula-cell">\(n^m\)</td></tr>
+          <tr><td><strong>Permutació</strong></td><td>✅ Sí</td><td>❌ No</td><td>✅ Sí</td><td class="formula-cell">\(n!\)</td></tr>
+          <tr><td><strong>Combinació</strong></td><td>❌ No</td><td>❌ No</td><td>❌ No</td><td class="formula-cell">\(\dfrac{n!}{m!\cdot(n-m)!}\)</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="fade-in">
+      <h4 style="font-family:'Playfair Display',serif; font-size:22px; margin-bottom:16px; margin-top:32px;">Exercicis de <span style="color:var(--accent4);">pràctica</span></h4>
+      <div class="practice-grid">
+        <div class="practice-item"><div class="practice-num">1</div><div>
+          <p>Un metge ha de seleccionar 3 medicaments d'una llista de 10 per a un protocol. L'ordre no és rellevant. Quants protocols distints pot crear?</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">\(C(10,3) = 120\)</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">2</div><div>
+          <p>En un torneig de pàdel amb 8 equips, cada equip juga contra cadascun dels altres. Quants partits es jugaran en total?</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">\(C(8,2) = 28\) (cada partit és una combinació de 2 equips, l'ordre no importa)</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">3</div><div>
+          <p>Una arquitecta vol escollir 4 materials de construcció de 9 disponibles per a un projecte. Quantes combinacions pot triar?</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">\(C(9,4) = 126\)</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">4</div><div>
+          <p>En una classe de 25 alumnes, la professora vol escollir 2 per participar en un debat. Quantes parelles pot formar?</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">\(C(25,2) = 300\)</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">5</div><div>
+          <p>Un xef ha de crear una carta amb 3 postres de la seva col·lecció de 11 receptes. Si l'ordre en la carta no li importa, de quantes formes ho pot fer?</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">\(C(11,3) = 165\)</p>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓ 5: ESDEVENIMENTS -->
+<section class="section" id="esdev">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-num">05</span>
+      <h2><span>Esdeveniments</span></h2>
+    </div>
+    <div class="card gold fade-in">
+      <h4>Tipus d'esdeveniments</h4>
+      <div class="def-box">
+        <div class="def-item">
+          <p class="def-title">Elemental</p>
+          <p>Un sol resultat simple. Ex: llençar un dau i treure un 5 → {5}.</p>
+        </div>
+        <div class="def-item">
+          <p class="def-title">Compost</p>
+          <p>Format per dos o més elementals. Ex: treure un número parell → {2, 4, 6}.</p>
+        </div>
+        <div class="def-item">
+          <p class="def-title">Segur</p>
+          <p>Sempre passa. P = 1. Ex: treure ≤6 en un dau de 6 cares.</p>
+        </div>
+        <div class="def-item">
+          <p class="def-title">Impossible</p>
+          <p>Mai passa. P = 0. Ex: treure un 9 en un dau de 6 cares.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card teal fade-in">
+      <h4>Operacions amb esdeveniments</h4>
+      <div class="laws-grid">
+        <div class="law-card">
+          <p class="law-name">Unió (A ∪ B)</p>
+          <div class="law-formula">\( A \cup B \) — "A o B"</div>
+          <p style="margin-top:12px; color:var(--text-muted); font-size:14px;">Elements que estan en A, en B, o en tots dos.</p>
+        </div>
+        <div class="law-card">
+          <p class="law-name">Intersecció (A ∩ B)</p>
+          <div class="law-formula">\( A \cap B \) — "A i B"</div>
+          <p style="margin-top:12px; color:var(--text-muted); font-size:14px;">Elements que estan en A i en B simultàniament.</p>
+        </div>
+        <div class="law-card">
+          <p class="law-name">Complementari</p>
+          <div class="law-formula">\( \bar{A} \) — "No A"</div>
+          <p style="margin-top:12px; color:var(--text-muted); font-size:14px;">Tot l'espai mostral excepte els elements de A.</p>
+        </div>
+        <div class="law-card">
+          <p class="law-name">Diferència</p>
+          <div class="law-formula">\( A - B = A \cap \bar{B} \)</div>
+          <p style="margin-top:12px; color:var(--text-muted); font-size:14px;">Allò que hi ha en A però no en B.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="solved fade-in">
+      <div class="solved-header">
+        <span class="solved-badge">Exercici resolt</span>
+        <p>Llençem un dau. A = {múltiples de 2} i B = {múltiples de 3}. Calcula A∪B, A∩B, Ā i B̄.</p>
+      </div>
+      <div class="solved-body">
+        <p style="color:var(--text-muted);">E = {1,2,3,4,5,6} · A = {2,4,6} · B = {3,6}</p>
+        <div class="step"><div class="step-num">1</div><div>
+          <p><strong>Unió</strong>: tots els que estan en algun dels dos.</p>
+          <div class="math-step">\( A \cup B = \{2, 3, 4, 6\} \)</div>
+        </div></div>
+        <div class="step"><div class="step-num">2</div><div>
+          <p><strong>Intersecció</strong>: els que estan en tots dos.</p>
+          <div class="math-step">\( A \cap B = \{6\} \)</div>
+        </div></div>
+        <div class="step"><div class="step-num">3</div><div>
+          <p><strong>Complementaris</strong>: els que NO estan en cada event.</p>
+          <div class="math-step">\( \bar{A} = \{1, 3, 5\} \qquad \bar{B} = \{1, 2, 4, 5\} \)</div>
+        </div></div>
+        <p style="color:var(--text-muted); font-size:14px; margin-top:8px;">Com \(A \cap B = \{6\} \neq \emptyset\), A i B són <strong style="color:var(--green);">compatibles</strong>.</p>
+      </div>
+    </div>
+
+    <div class="card pink fade-in">
+      <h3>Compatibles i Incompatibles</h3>
+      <p>Si \( A \cap B = \emptyset \), A i B són <strong style="color:var(--red);">incompatibles</strong> (no poden ocórrer alhora).</p>
+      <p style="margin-top:8px;">Si \( A \cap B \neq \emptyset \), A i B són <strong style="color:var(--green);">compatibles</strong> (poden coincidir).</p>
+      <div class="example-box" style="margin-top:16px;">
+        <span class="ex-label">Exemple amb un dau de 6 cares</span>
+        <p>A = "obtenir parell" = {2, 4, 6}</p>
+        <p>B = "obtenir imparell" = {1, 3, 5}</p>
+        <p>C = "obtenir múltiple de 3" = {3, 6}</p>
+        <p style="margin-top:12px;">\( A \cap B = \emptyset \) → <strong style="color:var(--red);">incompatibles</strong></p>
+        <p>\( A \cap C = \{6\} \) → <strong style="color:var(--green);">compatibles</strong></p>
+        <p>\( B \cap C = \{3\} \) → <strong style="color:var(--green);">compatibles</strong></p>
+      </div>
+    </div>
+
+    <div class="fade-in">
+      <h4 style="font-family:'Playfair Display',serif; font-size:22px; margin-bottom:16px; margin-top:32px;">Exercicis de <span style="color:var(--accent4);">pràctica</span></h4>
+      <div class="practice-grid">
+        <div class="practice-item"><div class="practice-num">1</div><div>
+          <p>E = {1,...,10}. A = {múltiples de 2}, B = {múltiples de 5}. Calcula A∪B, A∩B, Ā i determina si A i B són compatibles.</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">A={2,4,6,8,10}, B={5,10}. A∩B={10} → compatibles.</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">2</div><div>
+          <p>En llençar dues monedes, descriu l'espai mostral i l'event A = "sortir exactament una cara". Calcula Ā.</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">E={(C,C),(C,X),(X,C),(X,X)}. A={(C,X),(X,C)}. Ā={(C,C),(X,X)}.</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">3</div><div>
+          <p>E = {lletres distintes de MATEMÀTIQUES}. A = {vocals}, B = {consonants}. Calcula A∪B, A∩B i determina si són compatibles.</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">A∩B = ∅ → incompatibles. A∪B = E.</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">4</div><div>
+          <p>E = {1,2,3,4,5,6}. A = {menors que 3} = {1,2}, B = {majors que 4} = {5,6}. Calcula A∪B, A∩B i A−B.</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">A∪B={1,2,5,6}, A∩B=∅ (incompatibles), A−B={1,2}.</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">5</div><div>
+          <p>A = {múltiples de 4 entre 1 i 20} i B = {múltiples de 6 entre 1 i 20}. Calcula A∩B i A∪B.</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">A={4,8,12,16,20}, B={6,12,18}. A∩B={12}, A∪B={4,6,8,12,16,18,20}.</p>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓ 6: PROBABILITAT -->
+<section class="section" id="prob">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-num">06</span>
+      <h2><span>Probabilitat</span></h2>
+    </div>
+    <div class="card gold fade-in">
+      <h3>Definició</h3>
+      <p>La probabilitat és el nombre al qual tendeixen les <strong>freqüències relatives</strong> d'un ereigniment quan repetim l'experiment un gran nombre de vegades. Això es coneix com la <strong>Llei dels Grans Nombres</strong>.</p>
+      <div class="formula-box" style="margin-top:20px;">
+        <span class="formula-label">Probabilitat clàssica</span>
+        \[ P(A) = \frac{\text{casos favorables}}{\text{casos totals}} \]
+      </div>
+    </div>
+
+    <div class="card teal fade-in">
+      <h4>Les 5 propietats fonamentals</h4>
+      <ul class="props-list">
+        <li><div class="prop-content">
+          <p>La probabilitat sempre està entre 0 i 1.</p>
+          <div class="prop-formula-box">\( 0 \leq P(A) \leq 1 \)</div>
+        </div></li>
+        <li><div class="prop-content">
+          <p>La probabilitat de l'espai mostral és 1. La de l'impossible és 0.</p>
+          <div class="prop-formula-box">\( P(E) = 1 \qquad P(\emptyset) = 0 \)</div>
+        </div></li>
+        <li><div class="prop-content">
+          <p>La probabilitat del complementari: el que "no és A".</p>
+          <div class="prop-formula-box">\( P(A) = 1 - P(\bar{A}) \)</div>
+        </div></li>
+        <li><div class="prop-content">
+          <p>Per dos events <strong>incompatibles</strong> \((A \cap B = \emptyset)\):</p>
+          <div class="prop-formula-box">\( P(A \cup B) = P(A) + P(B) \)</div>
+        </div></li>
+        <li><div class="prop-content">
+          <p>Per dos events <strong>qualsevol</strong> (fórmula general):</p>
+          <div class="prop-formula-box">\( P(A \cup B) = P(A) + P(B) - P(A \cap B) \)</div>
+        </div></li>
+      </ul>
+    </div>
+
+    <div class="card pink fade-in">
+      <h4>📌 Truc clau: De Morgan aplicat a probabilitats</h4>
+      <div class="trick-grid">
+        <div class="trick-item">
+          <p class="label">No A <strong>o</strong> No B &nbsp;→&nbsp; \( \bar{A} \cup \bar{B} \)</p>
+          <div style="margin-top:8px;">\[ 1 - P(A \cap B) \]</div>
+        </div>
+        <div class="trick-item">
+          <p class="label">No A <strong>i</strong> No B &nbsp;→&nbsp; \( \bar{A} \cap \bar{B} \)</p>
+          <div style="margin-top:8px;">\[ 1 - P(A \cup B) \]</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="solved fade-in">
+      <div class="solved-header">
+        <span class="solved-badge">Exercici resolt complet</span>
+        <p>La prob. de ploure demà és 0,4. La de vent és 0,3. La de pluja i vent alhora és 0,15. Calcula: a) No plou, b) Plou o fa vent, c) No plou o no fa vent.</p>
+      </div>
+      <div class="solved-body">
+        <p style="color:var(--text-muted);">A = "Plou" · B = "Fa vent" · P(A) = 0,4 · P(B) = 0,3 · P(A∩B) = 0,15</p>
+
+        <p style="margin-top:20px;"><strong>a) P(no plou) = \(P(\bar{A})\)</strong></p>
+        <div class="math-step">\[ P(\bar{A}) = 1 - P(A) = 1 - 0{,}4 = 0{,}6 \]</div>
+
+        <p style="margin-top:16px;"><strong>b) P(plou o fa vent) = \(P(A \cup B)\)</strong></p>
+        <div class="math-step">\[ P(A \cup B) = P(A) + P(B) - P(A \cap B) = 0{,}4 + 0{,}3 - 0{,}15 = 0{,}55 \]</div>
+
+        <p style="margin-top:16px;"><strong>c) P(no plou o no fa vent) = \(P(\bar{A} \cup \bar{B})\)</strong></p>
+        <p style="color:var(--text-muted); font-size:14px;">Per De Morgan: \( \bar{A} \cup \bar{B} = \overline{A \cap B} \)</p>
+        <div class="math-step">\[ P(\bar{A} \cup \bar{B}) = 1 - P(A \cap B) = 1 - 0{,}15 = 0{,}85 \]</div>
+
+        <div class="result">a) 0,6 &nbsp;·&nbsp; b) 0,55 &nbsp;·&nbsp; c) 0,85</div>
+      </div>
+    </div>
+
+    <div class="fade-in">
+      <h4 style="font-family:'Playfair Display',serif; font-size:22px; margin-bottom:16px; margin-top:32px;">Exercicis de <span style="color:var(--accent4);">pràctica</span></h4>
+      <div class="practice-grid">
+        <div class="practice-item"><div class="practice-num">1</div><div>
+          <p>En una urna hi ha 4 boles vermelles, 3 blaves i 3 grogues. Treiem una bola. Calcula: a) P(vermella), b) P(no blava), c) P(vermella o groga).</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">a) 4/10 = 0,4 · b) 7/10 = 0,7 · c) 7/10 = 0,7</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">2</div><div>
+          <p>P(A) = 0,6, P(B) = 0,4, P(A∩B) = 0,25. Calcula: P(A∪B), P(Ā), P(Ā∩B̄) i P(Ā∪B̄).</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">P(A∪B)=0,75 · P(Ā)=0,4 · P(Ā∩B̄)=0,25 · P(Ā∪B̄)=0,75</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">3</div><div>
+          <p>La probabilitat d'aprovar Química és 0,65. La de Biologia és 0,70. La d'aprovar les dues és 0,45. Calcula: a) No aprovi cap. b) Aprovi almenys una.</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">P(Q∪B)=0,9 · a) 0,1 · b) 0,9</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">4</div><div>
+          <p>P(A) = 0,5, P(B) = 0,35, P(A∪B) = 0,7. Calcula: i) P(A∩B), ii) P(Ā∩B), iii) P(Ā∪B̄).</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">i) 0,15 · ii) P(B)−P(A∩B)=0,20 · iii) 1−0,15=0,85</p>
+        </div></div>
+        <div class="practice-item"><div class="practice-num">5</div><div>
+          <p>Llencem un dau. A = "sortir parell", B = "sortir ≥ 4". Calcula P(A), P(B), P(A∩B), P(A∪B) i P(Ā∩B̄).</p>
+          <button class="hint-btn" onclick="toggleHint(this)">Pista</button>
+          <p class="hint-text">A={2,4,6}, B={4,5,6}, A∩B={4,6}. P(A)=1/2, P(B)=1/2, P(A∩B)=1/3, P(A∪B)=2/3, P(Ā∩B̄)=1/3</p>
+        </div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECCIÓ 7: DE MORGAN -->
+<section class="section" id="morgan">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-num">07</span>
+      <h2>Lleis de <span>De Morgan</span></h2>
+    </div>
+    <div class="card purple fade-in">
+      <p>Les lleis de De Morgan permeten transformar unions en interseccions (i viceversa) quan hi ha complementaris. Són fonamentals per calcular probabilitats complexes.</p>
+      <div class="laws-grid" style="margin-top:24px;">
+        <div class="law-card">
+          <p class="law-name">Primera llei</p>
+          <div class="law-formula">\[ \overline{A \cup B} = \bar{A} \cap \bar{B} \]</div>
+          <p style="margin-top:12px; color:var(--text-muted); font-size:14px;">"El contrari d'una unió és la intersecció dels contraris"</p>
+        </div>
+        <div class="law-card">
+          <p class="law-name">Segona llei</p>
+          <div class="law-formula">\[ \overline{A \cap B} = \bar{A} \cup \bar{B} \]</div>
+          <p style="margin-top:12px; color:var(--text-muted); font-size:14px;">"El contrari d'una intersecció és la unió dels contraris"</p>
+        </div>
+      </div>
+      <div class="example-box" style="margin-top:24px;">
+        <span class="ex-label">Propietats addicionals</span>
+        <p>\( A \cup \bar{A} = E \) &nbsp; (event segur)</p>
+        <p>\( A \cap \bar{A} = \emptyset \) &nbsp; (event impossible)</p>
+        <p>\( \overline{\bar{A}} = A \) &nbsp; (el contrari del contrari és l'original)</p>
+      </div>
+    </div>
+    <div class="card teal fade-in">
+      <h4>Guia ràpida: Expressió verbal → Fórmula</h4>
+      <table class="compare-table" style="margin-top:12px;">
+        <thead>
+          <tr><th>Expressió verbal</th><th>Notació</th><th>Fórmula de probabilitat</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>"No A"</td><td>\( \bar{A} \)</td><td class="formula-cell">\( 1 - P(A) \)</td></tr>
+          <tr><td>"A o B"</td><td>\( A \cup B \)</td><td class="formula-cell">\( P(A)+P(B)-P(A \cap B) \)</td></tr>
+          <tr><td>"A i B"</td><td>\( A \cap B \)</td><td class="formula-cell">Donada o calculada</td></tr>
+          <tr><td>"No A <strong>o</strong> No B"</td><td>\( \bar{A} \cup \bar{B} \)</td><td class="formula-cell">\( 1 - P(A \cap B) \)</td></tr>
+          <tr><td>"No A <strong>i</strong> No B"</td><td>\( \bar{A} \cap \bar{B} \)</td><td class="formula-cell">\( 1 - P(A \cup B) \)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- EXAMEN -->
+<section class="section" id="examen" style="border-bottom:none;">
+  <div class="container">
+    <div class="exam-section fade-in">
+      <div class="exam-header">
+        <span class="exam-tag">Examen de pràctica</span>
+        <h2>Prova d'Avaluació</h2>
+        <p>Per a cada exercici, identifica primer quin concepte cal aplicar i mostra tots els càlculs.</p>
+      </div>
+
+      <div class="exam-question">
+        <div class="q-num">1</div>
+        <div class="q-content">
+          <p>Una galeria d'art vol col·locar 5 quadres en una paret, en una fila horitzontal. Disposa exactament de 5 quadres, un per cada posició. De quantes maneres es pot organitzar l'exposició?</p>
+        </div>
+      </div>
+
+      <div class="exam-question">
+        <div class="q-num">2</div>
+        <div class="q-content">
+          <p>Un videojoc permet crear un personatge escollint 3 habilitats de 10 disponibles. L'ordre en que s'escullen no canvia el personatge (el resultat és el mateix grup d'habilitats). De quants personatges distints es pot disposar?</p>
+        </div>
+      </div>
+
+      <div class="exam-question">
+        <div class="q-num">3</div>
+        <div class="q-content">
+          <p>Un sistema de seguretat genera codis d'accés de 5 dígits (del 0 al 9). Les xifres es poden repetir. Quants codis d'accés diferents pot generar el sistema?</p>
+        </div>
+      </div>
+
+      <div class="exam-question">
+        <div class="q-num">4</div>
+        <div class="q-content">
+          <p>En una lliga de futbol sala participen 6 equips. Cada equip ha de jugar exactament un partit contra cadascun dels altres. Quants partits es disputaran en total durant la lliga?</p>
+        </div>
+      </div>
+
+      <div class="exam-question">
+        <div class="q-num">5</div>
+        <div class="q-content">
+          <p>Una caixa conté 6 boles blanques, 4 boles negres i 2 boles taronges. S'extreu una bola a l'atzar. Calcula:</p>
+          <div class="q-parts">
+            <p>a) La probabilitat que la bola sigui negra.</p>
+            <p>b) La probabilitat que la bola no sigui taronja.</p>
+            <p>c) La probabilitat que la bola sigui blanca o negra.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="exam-question">
+        <div class="q-num">6</div>
+        <div class="q-content">
+          <p>La probabilitat que un client compri un ordinador és 0,35. La probabilitat que compri un mòbil és 0,50. La probabilitat que compri els dos és 0,20. Calcula:</p>
+          <div class="q-parts">
+            <p>a) Probabilitat que compri almenys un dels dos productes.</p>
+            <p>b) Probabilitat que no compri cap dels dos.</p>
+            <p>c) Probabilitat que no compri ordinador o no compri mòbil.</p>
+            <p>d) Probabilitat que no compri ordinador i no compri mòbil.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="exam-question">
+        <div class="q-num">7</div>
+        <div class="q-content">
+          <p>En una olimpíada escolar de matemàtiques participen 11 alumnes. S'han d'assignar una medalla d'or, una de plata i una de bronze. De quantes formes es pot omplir el podi?</p>
+        </div>
+      </div>
+
+      <div class="exam-question">
+        <div class="q-num">8</div>
+        <div class="q-content">
+          <p>La probabilitat que un pacient millori amb el tractament A és 0,72. La probabilitat que millori amb el tractament B és 0,58. La probabilitat que millori amb els dos és 0,40. Calcula:</p>
+          <div class="q-parts">
+            <p>a) Probabilitat que no millori amb cap tractament.</p>
+            <p>b) Probabilitat que millori amb almenys un tractament.</p>
+            <p>c) Probabilitat que no millori ni amb A ni amb B.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="exam-question">
+        <div class="q-num">9</div>
+        <div class="q-content">
+          <p>Una cadena de ràdio vol crear jingles de 4 notes, cadascuna escollida entre les 7 notes musicals (Do, Re, Mi, Fa, Sol, La, Si). Les notes es poden repetir i l'ordre importa (Do-Re ≠ Re-Do). Quants jingles distints pot crear?</p>
+        </div>
+      </div>
+
+      <div class="exam-question">
+        <div class="q-num">10</div>
+        <div class="q-content">
+          <p>Un grup de 20 estudiants d'intercanvi ha d'allotjar-se en parelles. La primera tasca és escollir quins 2 estudiants compartiran la primera habitació.</p>
+          <div class="q-parts">
+            <p>a) Si l'ordre d'assignació no importa (no hi ha rols dins la parella), de quantes maneres es pot escollir la primera parella?</p>
+            <p>b) Si a la primera habitació cal assignar un estudiant com a "responsable" i l'altre com a "suplent" (l'ordre sí importa), de quantes maneres es pot fer?</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="exam-info">
+        <div class="exam-info-item"><div class="dot"></div>10 preguntes</div>
+        <div class="exam-info-item"><div class="dot"></div>Temps orientatiu: 60 min</div>
+        <div class="exam-info-item"><div class="dot"></div>Mostra tots els càlculs</div>
+        <div class="exam-info-item"><div class="dot"></div>Identifica el tipus de problema</div>
+        <div class="exam-info-item"><div class="dot"></div>Justifica la fórmula usada</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>PROBABILITAT I COMBINATÒRIA &nbsp;·&nbsp; 2N BATXILLERAT &nbsp;·&nbsp; MATEMÀTIQUES</p>
+  <p style="margin-top:8px; opacity:0.5;">Teoria · Exercicis resolts · Pràctica · Examen</p>
+</footer>
+
+<script>
+  function toggleHint(btn) {
+    const hint = btn.nextElementSibling;
+    if (hint.style.display === 'block') {
+      hint.style.display = 'none';
+      btn.textContent = 'Pista';
+    } else {
+      hint.style.display = 'block';
+      btn.textContent = 'Amagar';
+    }
+  }
+
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) entry.target.classList.add('visible');
+    });
+  }, { threshold: 0.06 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const target = document.querySelector(a.getAttribute('href'));
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+</body>
+</html>
